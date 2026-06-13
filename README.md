@@ -8,6 +8,12 @@ Feito com **Node.js + Express + Socket.IO** e **JavaScript puro** no front (sem 
 
 ## ✨ O que tem
 
+**Contas e login**
+- **Cadastro com e-mail e senha** + **confirmação por e-mail** (a conta só ativa após confirmar).
+- **Data de nascimento** no cadastro para liberar mesas adultas; mínimo de 13 anos para criar conta.
+- Senhas guardadas com **scrypt** (nunca em texto puro); sessões por **token** (guardado só como hash).
+- **Mesas 18+**: o mestre marca a mesa como adulta e só maiores de 18 anos conseguem entrar.
+
 **Mesa em tempo real**
 - O mestre cria a sala e recebe um **código de 5 caracteres** + link de convite (`?mesa=XXXXX`).
 - Todos veem o grupo, as fichas e as rolagens ao vivo.
@@ -32,7 +38,7 @@ Feito com **Node.js + Express + Socket.IO** e **JavaScript puro** no front (sem 
 - Críticos (20) e falhas críticas (1) destacados na crônica.
 
 **Perfil, histórico e sessões pausadas**
-- Perfil local (nome + avatar) com estatísticas.
+- **Conta** com nome + avatar editáveis e estatísticas (mesas mestradas/jogadas, personagens criados).
 - **Sessões pausadas**: o mestre pausa e retoma depois exatamente de onde parou (personagens, cena e crônica preservados).
 
 **Pensado para o celular** — layout mobile-first com abas (Grupo · Crônica · Dados).
@@ -69,7 +75,35 @@ npx localtunnel --port 3000     # ou: ngrok http 3000
 
 **Deploy:** Railway, Render ou similar (respeita a variável `PORT`). Comando de start: `npm start`.
 
-> Os dados (perfis, sessões pausadas, histórico) ficam em `data/db.json` no servidor. Em deploys efêmeros, use um disco persistente para não perder as sessões.
+> Os dados (contas, sessões pausadas, histórico) ficam em `data/db.json` no servidor. Em deploys efêmeros, use um disco persistente para não perder as contas e sessões.
+
+---
+
+## ⚙️ Configuração (variáveis de ambiente)
+
+O app funciona sem nenhuma configuração em modo de desenvolvimento — **sem SMTP, o link de confirmação aparece no console e na própria tela** (modo dev), para você testar. Em **produção**, configure o envio de e-mail real:
+
+| Variável | Para quê | Padrão |
+|---|---|---|
+| `PORT` | Porta do servidor | `3000` |
+| `APP_URL` | URL pública (usada nos links de confirmação do e-mail) | `http://localhost:PORT` |
+| `NODE_ENV` | Em `production`, esconde o link de confirmação de dev | — |
+| `SMTP_HOST` | Servidor SMTP (ativa o envio real de e-mail) | — |
+| `SMTP_PORT` | Porta SMTP | `587` |
+| `SMTP_SECURE` | `true` para porta 465 (TLS direto) | `false` |
+| `SMTP_USER` / `SMTP_PASS` | Credenciais SMTP | — |
+| `MAIL_FROM` | Remetente dos e-mails | `Távola RPG <no-reply@tavola.local>` |
+| `ALLOWED_ORIGINS` | Origens permitidas no WebSocket (CORS), separadas por vírgula | reflete a origem |
+| `MAX_ROOMS` | Teto de mesas simultâneas | `2000` |
+| `MAX_CONN_PER_IP` | Teto de conexões por IP | `60` |
+
+Exemplo com Gmail (use uma **senha de app**):
+```bash
+APP_URL=https://suamesa.com NODE_ENV=production \
+SMTP_HOST=smtp.gmail.com SMTP_PORT=587 \
+SMTP_USER=voce@gmail.com SMTP_PASS=sua_senha_de_app \
+MAIL_FROM="Távola RPG <voce@gmail.com>" npm start
+```
 
 ---
 

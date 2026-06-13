@@ -1,36 +1,15 @@
 // public/js/profile.js
-// Perfil local do usuário: id estável (localStorage), nome e avatar.
+// Gerencia a sessão de login no cliente: token e usuário em cache.
 
-const KEY = 'tavola:profile';
+const TKEY = 'tavola:session';
+const UKEY = 'tavola:user';
 
-const Profile = {
-  data: null,
-
-  load() {
-    if (this.data) return this.data;
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) this.data = JSON.parse(raw);
-    } catch (_) {}
-    if (!this.data || !this.data.id) {
-      this.data = { id: this._uuid(), name: '', avatar: '🧙' };
-      this.save();
-    }
-    return this.data;
-  },
-
-  save(patch = {}) {
-    this.data = { ...this.load(), ...patch };
-    try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch (_) {}
-    return this.data;
-  },
-
-  get() { return this.load(); },
-
-  _uuid() {
-    if (crypto?.randomUUID) return crypto.randomUUID();
-    return 'p-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
-  },
+const Session = {
+  getToken() { try { return localStorage.getItem(TKEY); } catch (_) { return null; } },
+  setToken(t) { try { t ? localStorage.setItem(TKEY, t) : localStorage.removeItem(TKEY); } catch (_) {} },
+  getUser() { try { const r = localStorage.getItem(UKEY); return r ? JSON.parse(r) : null; } catch (_) { return null; } },
+  setUser(u) { try { u ? localStorage.setItem(UKEY, JSON.stringify(u)) : localStorage.removeItem(UKEY); } catch (_) {} },
+  clear() { this.setToken(null); this.setUser(null); },
 };
 
-window.Profile = Profile;
+window.Session = Session;

@@ -7,13 +7,22 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node test/test_core.mjs && node test/test_integration.mjs && node test/test_security.mjs"
+    "test": "node test/test_core.mjs && node test/test_integration.mjs && node test/test_security.mjs && node test/test_auth.mjs"
   },
-  "keywords": ["rpg", "dnd", "d&d", "5e", "vtt", "tabletop", "socket.io"],
+  "keywords": [
+    "rpg",
+    "dnd",
+    "d&d",
+    "5e",
+    "vtt",
+    "tabletop",
+    "socket.io"
+  ],
   "author": "AndrausP",
   "license": "MIT",
   "dependencies": {
     "express": "^4.21.2",
+    "nodemailer": "^8.0.11",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

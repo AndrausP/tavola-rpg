@@ -93,6 +93,7 @@ export function validateConfig(input = {}, { partial = false } = {}) {
   if ('abilityMethod' in input) out.abilityMethod = METHODS.has(input.abilityMethod) ? input.abilityMethod : 'standard_array';
   if ('allowPlayerRolls' in input) out.allowPlayerRolls = !!input.allowPlayerRolls;
   if ('dmCanEdit' in input) out.dmCanEdit = !!input.dmCanEdit;
+  if ('adult' in input) out.adult = !!input.adult;
   if ('allowedRaces' in input) out.allowedRaces = Array.isArray(input.allowedRaces)
     ? input.allowedRaces.filter(k => RACE_KEYS.has(k)).slice(0, 20) : null;
   if ('allowedClasses' in input) out.allowedClasses = Array.isArray(input.allowedClasses)

@@ -14,8 +14,60 @@
 <body>
 <div id="app">
 
+  <!-- ============ LOGIN / CADASTRO ============ -->
+  <section class="screen active" id="screen-auth">
+    <div class="auth-wrap">
+      <header class="hero">
+        <div class="hero-crest">🐉</div>
+        <h1 class="hero-title">Távola</h1>
+        <p class="hero-sub">⚜ Mesa de RPG · D&amp;D 5ª Edição ⚜</p>
+      </header>
+
+      <div class="parchment auth-card" id="auth-forms">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-atab="login">Entrar</button>
+          <button class="auth-tab" data-atab="register">Criar conta</button>
+        </div>
+
+        <div class="auth-pane" id="pane-login">
+          <label class="ink-label">E-mail</label>
+          <input id="login-email" class="ink-input" type="email" autocomplete="email" placeholder="voce@email.com" />
+          <label class="ink-label">Senha</label>
+          <input id="login-pass" class="ink-input" type="password" autocomplete="current-password" placeholder="••••••••" />
+          <button class="btn-wax btn-block" id="btn-login">Entrar na Távola</button>
+          <p class="auth-msg" id="login-msg"></p>
+        </div>
+
+        <div class="auth-pane" id="pane-register" hidden>
+          <label class="ink-label">Nome de aventureiro</label>
+          <input id="reg-name" class="ink-input" type="text" maxlength="30" placeholder="Como te chamam" />
+          <label class="ink-label">E-mail</label>
+          <input id="reg-email" class="ink-input" type="email" autocomplete="email" placeholder="voce@email.com" />
+          <label class="ink-label">Data de nascimento</label>
+          <input id="reg-birth" class="ink-input" type="date" />
+          <small class="auth-hint">Usada para liberar mesas adultas (18+). É preciso ter ao menos 13 anos.</small>
+          <label class="ink-label">Senha</label>
+          <input id="reg-pass" class="ink-input" type="password" autocomplete="new-password" placeholder="mínimo 8 caracteres" />
+          <button class="btn-wax btn-block" id="btn-register">Criar conta</button>
+          <p class="auth-msg" id="reg-msg"></p>
+        </div>
+      </div>
+
+      <div class="parchment auth-card" id="confirm-card" hidden>
+        <h2 class="ornate">📨 Confirme seu e-mail</h2>
+        <p style="color:var(--ink-soft);text-align:center">Enviamos um link de confirmação para <b id="confirm-email"></b>. Abra-o para ativar a conta e poder entrar.</p>
+        <div id="dev-confirm" hidden style="margin-top:14px;text-align:center">
+          <small class="auth-hint">Modo de desenvolvimento (sem e-mail real configurado):</small><br>
+          <a id="dev-confirm-link" class="btn-outline btn-sm" style="margin-top:8px;display:inline-block" href="#" target="_blank" rel="noopener">Confirmar agora ›</a>
+        </div>
+        <button class="btn-outline btn-block" id="btn-resend" style="margin-top:14px">Reenviar e-mail</button>
+        <button class="link-back" id="btn-confirm-back" style="display:block;margin:12px auto 0">‹ Voltar ao login</button>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ INÍCIO ============ -->
-  <section class="screen active" id="screen-home">
+  <section class="screen" id="screen-home">
     <div class="home-wrap">
       <header class="hero">
         <div class="hero-crest">🐉</div>
@@ -24,10 +76,16 @@
       </header>
 
       <div class="parchment profile-setup">
-        <h2 class="ornate">Teu Nome de Aventureiro</h2>
-        <div class="profile-row">
+        <div class="account-head">
           <div class="avatar-pick" id="home-avatar">🧙</div>
-          <input id="home-name" class="ink-input" type="text" maxlength="30" placeholder="Como te chamam nas tavernas?" />
+          <div class="account-id">
+            <div class="account-name-row">
+              <input id="home-name" class="ink-input" type="text" maxlength="30" placeholder="Seu nome" />
+              <button class="btn-outline btn-sm" id="btn-save-name">Salvar</button>
+            </div>
+            <div class="account-email" id="home-email"></div>
+          </div>
+          <button class="btn-outline btn-sm" id="btn-logout" title="Sair da conta">Sair</button>
         </div>
         <div class="avatar-grid" id="home-avatar-grid"></div>
         <div class="profile-stats" id="home-stats"></div>
@@ -104,6 +162,10 @@
           <input type="checkbox" id="camp-dmedit" checked />
           <span>Mestre pode editar fichas dos jogadores</span>
         </label>
+        <label class="toggle-line toggle-adult">
+          <input type="checkbox" id="camp-adult" />
+          <span>🔞 Conteúdo adulto — só maiores de 18 anos poderão entrar</span>
+        </label>
 
         <button class="btn-wax btn-block" id="btn-create-room">⚔️ Abrir a Mesa</button>
       </div>
@@ -136,6 +198,7 @@
       <div class="tb-left">
         <span class="tb-camp" id="tb-name">Campanha</span>
         <button class="tb-code" id="tb-code" title="Copiar código">⚜ <span id="tb-code-val">-----</span></button>
+        <span class="tb-adult" id="tb-adult" hidden>🔞 18+</span>
       </div>
       <div class="tb-right">
         <button class="tb-btn" id="tb-share" title="Compartilhar convite">🔗</button>

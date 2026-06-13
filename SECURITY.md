@@ -40,11 +40,21 @@ Tudo que vem do cliente é tratado como não confiável e passa por **allowlist 
 ### Dados de jogo
 - O motor de dados **não usa `eval`**: a expressão é validada por regex e parseada manualmente, com limites de quantidade.
 
+### Autenticação e contas (`src/auth.js`)
+- **Senhas** com hash **scrypt** (KDF nativo do Node, sem dependências) + salt único por usuário; verificação em tempo constante (`timingSafeEqual`).
+- **Sessões** por token aleatório (32 bytes); no banco guarda-se **apenas o hash SHA-256** do token (um vazamento do arquivo não dá sessões usáveis).
+- **Confirmação de e-mail** obrigatória: a conta só entra após confirmar; tokens de confirmação são de **uso único**, expiram em 24h e também são guardados só como hash.
+- **Trava de idade**: a idade é calculada da data de nascimento; mesas marcadas como adultas (18+) bloqueiam quem não tem 18 anos. Mínimo de 13 anos para criar conta.
+- **Anti-enumeração**: login com e-mail inexistente ainda executa um hash "fantasma" para igualar o tempo de resposta; mensagens de erro não revelam se o e-mail existe.
+- **Rate limiting** nas rotas de auth (registro/login/reenvio) por IP, contra força bruta.
+- O socket é autenticado por token no handshake; **a identidade vem do login (servidor), nunca mais do cliente**.
+
 ## Limites conhecidos (sinceros)
-- **Não há autenticação real.** A identidade é um `id` local (no navegador). Dentro de uma mesa, isso é suficiente porque os `id`s de outros jogadores não são expostos, mas **não confie nisso para dados sensíveis**. Para um cenário sério, integre login (OAuth/JWT) e sessões.
-- **Persistência em arquivo JSON.** Adequado para uso pessoal/pequeno. Para produção, use um banco de dados real com backups.
-- **Sirva sempre atrás de HTTPS** (Railway/Render/Cloudflare já fazem isso). Em HTTP puro, dados trafegam sem criptografia.
+- **Token de sessão fica no `localStorage`.** É prático para esta SPA e o risco de XSS está bastante reduzido pela CSP estrita e pelo escape de saída — mas um cookie `httpOnly` seria ainda mais resistente a XSS. Evolução possível.
+- **Persistência em arquivo JSON.** Adequado para uso pessoal/pequeno. Para produção séria, use um banco de dados real com backups.
+- **Sirva sempre atrás de HTTPS** (Railway/Render/Cloudflare já fazem isso). Em HTTP puro, e-mail/senha trafegam sem criptografia.
 - Rate limiting é **por processo/memória**. Atrás de múltiplas instâncias, use um limitador compartilhado (ex.: Redis).
+- **E-mail real exige SMTP configurado.** Sem `SMTP_HOST`, o app fica em modo dev (link no console) — ótimo para testar, mas não envia e-mail de verdade.
 
 ## Configuração recomendada em produção
 Variáveis de ambiente:

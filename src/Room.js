@@ -30,6 +30,7 @@ export class Room {
       allowedRaces: Array.isArray(config.allowedRaces) ? config.allowedRaces : null, // null = todas
       allowedClasses: Array.isArray(config.allowedClasses) ? config.allowedClasses : null,
       dmCanEdit: config.dmCanEdit !== false,
+      adult: !!config.adult,
     };
 
     /** @type {Map<string, Member>} socketId -> member */
@@ -229,6 +230,7 @@ export class Room {
     if (partial.name != null) this.name = partial.name.toString().slice(0, 60);
     if (partial.allowPlayerRolls != null) c.allowPlayerRolls = !!partial.allowPlayerRolls;
     if (partial.dmCanEdit != null) c.dmCanEdit = !!partial.dmCanEdit;
+    if (partial.adult != null) c.adult = !!partial.adult;
     if (partial.maxPlayers != null) c.maxPlayers = clampInt(partial.maxPlayers, 1, 10);
     if (partial.levelStart != null) c.levelStart = clampInt(partial.levelStart, 1, 20);
     if (partial.abilityMethod != null) c.abilityMethod = partial.abilityMethod;

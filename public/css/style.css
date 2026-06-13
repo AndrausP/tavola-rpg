@@ -483,3 +483,31 @@ h1, h2, h3, .ornate, .page-title, .hero-title { font-family: var(--display); fon
   .skill-pick { grid-template-columns: 1fr; }
   .tb-camp { max-width: 30vw; }
 }
+
+/* =========================================================
+   AUTENTICAÇÃO
+   ========================================================= */
+.auth-wrap { max-width: 440px; margin: 0 auto; padding: 24px 18px 60px; display: flex; flex-direction: column; gap: 18px; }
+.auth-card { padding: 22px; }
+.auth-tabs { display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid var(--parch-edge); }
+.auth-tab { flex: 1; background: none; border: none; padding: 10px; font-family: var(--display); font-weight: 600; font-size: 1rem; color: var(--ink-faint); cursor: pointer; border-bottom: 3px solid transparent; }
+.auth-tab.active { color: var(--blood); border-bottom-color: var(--wax); }
+.auth-pane { display: flex; flex-direction: column; }
+.auth-pane .btn-block { margin-top: 18px; }
+.auth-msg { color: var(--wax); font-size: .88rem; margin-top: 10px; min-height: 18px; text-align: center; font-weight: 600; }
+.auth-hint { color: var(--ink-faint); font-size: .78rem; margin-top: 4px; display: block; }
+
+/* Conta no painel inicial */
+.account-head { display: flex; align-items: center; gap: 12px; }
+.account-id { flex: 1; min-width: 0; }
+.account-name-row { display: flex; gap: 8px; }
+.account-name-row .ink-input { flex: 1; }
+.account-email { font-size: .82rem; color: var(--ink-faint); margin-top: 4px; word-break: break-all; }
+
+/* Toggle adulto */
+.toggle-adult span { color: var(--blood); font-weight: 600; }
+.tb-adult { background: var(--wax); color: #f5e6c8; font-family: var(--display); font-size: .72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--blood); white-space: nowrap; }
+
+/* date input no tema claro */
+input[type="date"].ink-input { color: var(--ink); }
+input[type="date"]::-webkit-calendar-picker-indicator { filter: sepia(1) saturate(2) hue-rotate(-10deg); cursor: pointer; }
