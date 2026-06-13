@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node test/test_core.mjs && node test/test_integration.mjs"
+    "test": "node test/test_core.mjs && node test/test_integration.mjs && node test/test_security.mjs"
   },
   "keywords": ["rpg", "dnd", "d&d", "5e", "vtt", "tabletop", "socket.io"],
   "author": "AndrausP",

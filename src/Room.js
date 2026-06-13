@@ -3,6 +3,7 @@
 
 import { computeCharacter } from './Character.js';
 import { rollExpression, rollD20 } from './dice.js';
+import { LIMITS } from './validate.js';
 
 const uid = (p = 'id') => `${p}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
 
@@ -85,6 +86,14 @@ export class Room {
   upsertCharacter(socketId, rawChar, targetCharId = null) {
     const member = this.members.get(socketId);
     if (!member) return { error: 'Membro não encontrado.' };
+    if (!rawChar || typeof rawChar !== 'object') rawChar = {};
+
+    // O cliente NUNCA define o dono, o id ou chaves perigosas — só o servidor.
+    delete rawChar.ownerProfileId;
+    delete rawChar.id;
+    delete rawChar.__proto__;
+    delete rawChar.constructor;
+    delete rawChar.prototype;
 
     const isDM = this.isDM(socketId);
     let cid = targetCharId || member.characterId;
@@ -105,15 +114,18 @@ export class Room {
     }
 
     if (!cid) {
+      // limite de personagens por sala (proteção contra exaustão de recursos)
+      if (this.characters.size >= LIMITS.MAX_CHARS_PER_ROOM) {
+        return { error: 'Limite de personagens da mesa atingido.' };
+      }
       cid = uid('char');
-      rawChar.ownerProfileId = isDM && targetCharId === 'npc'
-        ? member.profileId : (rawChar.ownerProfileId || member.profileId);
       if (!isDM) member.characterId = cid;
     }
 
     const prevRaw = this.rawChars.get(cid) || {};
     const merged = { ...prevRaw, ...rawChar };
-    if (!merged.ownerProfileId) merged.ownerProfileId = member.profileId;
+    // dono é sempre derivado do servidor (nunca do cliente)
+    merged.ownerProfileId = prevRaw.ownerProfileId || member.profileId;
     merged.color = merged.color || member.color;
 
     const computed = computeCharacter(merged);
@@ -124,7 +136,6 @@ export class Room {
     this.rawChars.set(cid, merged);
     this.characters.set(cid, computed);
 
-    // vincula ao membro se for jogador sem ficha
     if (!isDM && !member.characterId) member.characterId = cid;
 
     return { character: computed, characterId: cid };

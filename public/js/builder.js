@@ -82,15 +82,16 @@ const Builder = (() => {
   // ================= ETAPA: IDENTIDADE =================
   function stepIdentity() {
     const r = S.raw;
-    const portrait = r.photo
-      ? `<div class="pv-portrait" style="background-image:url('${esc(r.photo)}')"></div>`
-      : `<div class="pv-portrait">${esc(r.photo || '🧙')}</div>`;
+    const safeP = Engine.safePhoto(r.photo);
+    const portraitHtml = (safeP && safeP.startsWith('data:'))
+      ? `<div class="pv-portrait" style="background-image:url('${safeP}')"></div>`
+      : `<div class="pv-portrait">${esc((safeP && !safeP.startsWith('data:')) ? safeP : '🧙')}</div>`;
     return `
       <h2 class="step-title">Quem é o herói?</h2>
       <p class="step-hint">Dê nome, rosto e essência ao seu personagem.</p>
       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
         <div id="id-portrait" style="cursor:pointer" title="Trocar retrato">
-          ${r.photo && r.photo.startsWith('data:') ? `<div class="pv-portrait" style="background-image:url('${esc(r.photo)}')"></div>` : `<div class="pv-portrait">${esc(typeof r.photo === 'string' && !r.photo.startsWith('data:') ? r.photo : '🧙')}</div>`}
+          ${portraitHtml}
         </div>
         <div style="flex:1;min-width:200px">
           <input id="id-name" class="ink-input" type="text" maxlength="40" placeholder="Nome do personagem" value="${esc(r.name)}" />
@@ -487,9 +488,10 @@ const Builder = (() => {
     const race = Engine.race(r.raceKey);
     const sub = Engine.subrace(r.raceKey, r.subraceKey);
     const k = Engine.klass(r.classKey);
-    const portrait = r.photo && r.photo.startsWith('data:')
-      ? `<div class="pv-portrait" style="background-image:url('${esc(r.photo)}')"></div>`
-      : `<div class="pv-portrait" style="color:${esc(r.color)}">${esc(typeof r.photo === 'string' && !r.photo.startsWith('data:') ? r.photo : '🧙')}</div>`;
+    const safeP = Engine.safePhoto(r.photo);
+    const portrait = (safeP && safeP.startsWith('data:'))
+      ? `<div class="pv-portrait" style="background-image:url('${safeP}')"></div>`
+      : `<div class="pv-portrait" style="color:${esc(r.color)}">${esc((safeP && !safeP.startsWith('data:')) ? safeP : '🧙')}</div>`;
     const raceLabel = race ? (sub ? `${sub.name}` : race.name) : '—';
     $('#builder-preview').innerHTML = `
       ${portrait}

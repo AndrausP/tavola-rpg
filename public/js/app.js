@@ -245,9 +245,10 @@
     }
     list.innerHTML = state.characters.map(c => {
       const hpPct = c.maxHp ? Math.max(0, Math.min(100, (c.currentHp / c.maxHp) * 100)) : 0;
-      const portrait = c.photo && c.photo.startsWith('data:')
-        ? `<div class="cc-portrait" style="background-image:url('${esc(c.photo)}')"></div>`
-        : `<div class="cc-portrait" style="color:${esc(c.color)}">${esc(c.photo || c.raceEmoji || '🧙')}</div>`;
+      const safe = Engine.safePhoto(c.photo);
+      const portrait = (safe && safe.startsWith('data:'))
+        ? `<div class="cc-portrait" style="background-image:url('${safe}')"></div>`
+        : `<div class="cc-portrait" style="color:${esc(c.color)}">${esc((safe && !safe.startsWith('data:')) ? safe : (c.raceEmoji || '🧙'))}</div>`;
       return `<div class="char-card" data-char="${c.id}" style="border-left-color:${esc(c.color)}">
         ${portrait}
         <div class="cc-main">
@@ -275,9 +276,10 @@
       ['⚡', Engine.signed(c.initiative), 'Iniciativa'], ['👣', c.speed + 'm', 'Desloc.'],
       ['👁️', c.passivePerception, 'Perc. Passiva'], ['✦', Engine.signed(c.profBonus), 'Proficiência'],
     ];
-    const portrait = c.photo && c.photo.startsWith('data:')
-      ? `<div class="sheet-portrait" style="background-image:url('${esc(c.photo)}')"></div>`
-      : `<div class="sheet-portrait" style="color:${esc(c.color)}">${esc(c.photo || c.raceEmoji || '🧙')}</div>`;
+    const safeP = Engine.safePhoto(c.photo);
+    const portrait = (safeP && safeP.startsWith('data:'))
+      ? `<div class="sheet-portrait" style="background-image:url('${safeP}')"></div>`
+      : `<div class="sheet-portrait" style="color:${esc(c.color)}">${esc((safeP && !safeP.startsWith('data:')) ? safeP : (c.raceEmoji || '🧙'))}</div>`;
 
     const abilitiesHtml = ab.map(a => `
       <div class="ability-box" ${opts.review ? '' : `data-roll-ability="${a.key}" data-mod="${c.mods[a.key]}" data-label="Teste de ${a.name}"`}>

@@ -31,6 +31,29 @@ const Engine = {
   pointBuyCost(score) { return this.srd.POINT_BUY_COST[score] ?? 99; },
   signed(n) { return n >= 0 ? `+${n}` : `${n}`; },
 
+  /** Valida foto antes de injetar em CSS url() — bloqueia quebra de HTML/CSS e esquemas. */
+  safePhoto(v) {
+    if (typeof v !== 'string') return null;
+    const s = v.trim();
+    if (!s) return null;
+    if (s.startsWith('data:')) {
+      if (s.length > 700000) return null;
+      return /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/.test(s) ? s : null;
+    }
+    if (/^(javascript|vbscript|data|file|blob|http|https):/i.test(s)) return null;
+    if (/[<>"'`()\\/{}=;]/.test(s)) return null;
+    return s.length <= 16 ? s : null;
+  },
+  /** Devolve o emoji do retrato (se não for imagem) ou um fallback. */
+  photoEmoji(v, fallback = '🧙') {
+    const s = this.safePhoto(v);
+    return (s && !s.startsWith('data:')) ? s : fallback;
+  },
+  isPhotoImage(v) {
+    const s = this.safePhoto(v);
+    return !!(s && s.startsWith('data:'));
+  },
+
   /** Soma todos os bônus de atributo (raça + sub-raça + escolhidos). */
   abilityBonuses(raw) {
     const total = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
