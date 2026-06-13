@@ -1,0 +1,18 @@
+# Dependências
+node_modules/
+
+# Banco de dados em runtime (perfis, sessões, histórico)
+data/db.json
+data/db.json.tmp
+
+# Logs e ambiente
+*.log
+.env
+.env.local
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

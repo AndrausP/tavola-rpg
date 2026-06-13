@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1410" />
+  <title>Távola — Mesa de RPG D&D 5e</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=MedievalSharp&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ INÍCIO ============ -->
+  <section class="screen active" id="screen-home">
+    <div class="home-wrap">
+      <header class="hero">
+        <div class="hero-crest">🐉</div>
+        <h1 class="hero-title">Távola</h1>
+        <p class="hero-sub">⚜ Mesa virtual de RPG · D&amp;D 5ª Edição ⚜</p>
+      </header>
+
+      <div class="parchment profile-setup">
+        <h2 class="ornate">Teu Nome de Aventureiro</h2>
+        <div class="profile-row">
+          <div class="avatar-pick" id="home-avatar">🧙</div>
+          <input id="home-name" class="ink-input" type="text" maxlength="30" placeholder="Como te chamam nas tavernas?" />
+        </div>
+        <div class="avatar-grid" id="home-avatar-grid"></div>
+        <div class="profile-stats" id="home-stats"></div>
+      </div>
+
+      <div class="action-cards">
+        <button class="seal-card seal-dm" id="btn-goto-create">
+          <span class="seal-icon">👑</span>
+          <span class="seal-title">Mestrar uma Mesa</span>
+          <span class="seal-desc">Crie a campanha, configure as regras e convide a galera</span>
+        </button>
+        <button class="seal-card seal-player" id="btn-goto-join">
+          <span class="seal-icon">🗡️</span>
+          <span class="seal-title">Entrar numa Mesa</span>
+          <span class="seal-desc">Tem um código de convite? Junte-se à aventura</span>
+        </button>
+      </div>
+
+      <div class="parchment join-box" id="join-box" hidden>
+        <h2 class="ornate">Código da Mesa</h2>
+        <div class="join-row">
+          <input id="join-code" class="ink-input code-input" type="text" maxlength="5" placeholder="ABCDE" />
+          <button class="btn-wax" id="btn-join">Entrar</button>
+        </div>
+      </div>
+
+      <div class="parchment sessions-box" id="paused-box" hidden>
+        <h2 class="ornate">⏸ Sessões Pausadas</h2>
+        <div class="session-list" id="paused-list"></div>
+      </div>
+
+      <div class="parchment history-box" id="history-box" hidden>
+        <h2 class="ornate">📜 Histórico de Aventuras</h2>
+        <div class="history-list" id="history-list"></div>
+      </div>
+
+      <footer class="home-foot"><span id="server-stats"></span></footer>
+    </div>
+  </section>
+
+  <!-- ============ CRIAR MESA (MESTRE) ============ -->
+  <section class="screen" id="screen-create">
+    <div class="form-wrap">
+      <button class="link-back" data-back="screen-home">‹ Voltar</button>
+      <h1 class="page-title">Forjar uma Campanha</h1>
+
+      <div class="parchment">
+        <label class="ink-label">Nome da Campanha</label>
+        <input id="camp-name" class="ink-input" type="text" maxlength="60" placeholder="A Maldição de Strahd…" />
+
+        <div class="form-grid">
+          <div>
+            <label class="ink-label">Nível inicial</label>
+            <input id="camp-level" class="ink-input" type="number" min="1" max="20" value="1" />
+          </div>
+          <div>
+            <label class="ink-label">Máx. de jogadores</label>
+            <input id="camp-max" class="ink-input" type="number" min="1" max="10" value="5" />
+          </div>
+        </div>
+
+        <label class="ink-label">Geração de atributos</label>
+        <div class="radio-cards" id="camp-method">
+          <label class="radio-card"><input type="radio" name="method" value="standard_array" checked /><span>Conjunto Padrão<small>15,14,13,12,10,8</small></span></label>
+          <label class="radio-card"><input type="radio" name="method" value="point_buy" /><span>Compra de Pontos<small>27 pontos</small></span></label>
+          <label class="radio-card"><input type="radio" name="method" value="manual" /><span>Manual / Rolagem<small>livre 3–20</small></span></label>
+        </div>
+
+        <label class="toggle-line">
+          <input type="checkbox" id="camp-rolls" checked />
+          <span>Permitir que jogadores rolem dados livremente</span>
+        </label>
+        <label class="toggle-line">
+          <input type="checkbox" id="camp-dmedit" checked />
+          <span>Mestre pode editar fichas dos jogadores</span>
+        </label>
+
+        <button class="btn-wax btn-block" id="btn-create-room">⚔️ Abrir a Mesa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CRIAÇÃO DE PERSONAGEM ============ -->
+  <section class="screen" id="screen-builder">
+    <div class="builder-wrap">
+      <div class="builder-head">
+        <h1 class="page-title" id="builder-title">Criar Personagem</h1>
+        <div class="stepper" id="stepper"></div>
+      </div>
+
+      <div class="builder-body">
+        <div class="builder-step" id="builder-step"></div>
+        <aside class="builder-preview parchment" id="builder-preview"></aside>
+      </div>
+
+      <div class="builder-nav">
+        <button class="btn-outline" id="builder-prev">‹ Anterior</button>
+        <button class="btn-wax" id="builder-next">Próximo ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MESA DE JOGO ============ -->
+  <section class="screen" id="screen-table">
+    <header class="table-bar">
+      <div class="tb-left">
+        <span class="tb-camp" id="tb-name">Campanha</span>
+        <button class="tb-code" id="tb-code" title="Copiar código">⚜ <span id="tb-code-val">-----</span></button>
+      </div>
+      <div class="tb-right">
+        <button class="tb-btn" id="tb-share" title="Compartilhar convite">🔗</button>
+        <button class="tb-btn dm-only" id="tb-pause" title="Pausar sessão">⏸</button>
+        <button class="tb-btn" id="tb-leave" title="Sair">🚪</button>
+      </div>
+    </header>
+
+    <!-- Cena (mestre escreve, todos veem) -->
+    <div class="scene-banner" id="scene-banner">
+      <div class="scene-head">
+        <span class="scene-label">❧ Cena Atual</span>
+        <button class="scene-edit dm-only" id="scene-edit">✎ editar</button>
+        <button class="scene-collapse" id="scene-collapse">▾</button>
+      </div>
+      <div class="scene-text" id="scene-text">A aventura está prestes a começar…</div>
+    </div>
+
+    <!-- Tabs (mobile) -->
+    <nav class="table-tabs">
+      <button class="ttab active" data-tab="party">⚔️ Grupo</button>
+      <button class="ttab" data-tab="log">📜 Crônica</button>
+      <button class="ttab" data-tab="dice">🎲 Dados</button>
+    </nav>
+
+    <div class="table-main">
+      <!-- Coluna: Grupo (personagens) -->
+      <section class="table-col col-party" id="col-party">
+        <div class="col-head">
+          <h3>O Grupo</h3>
+          <button class="mini-btn" id="btn-new-char">+ Personagem</button>
+        </div>
+        <div class="party-list" id="party-list"></div>
+      </section>
+
+      <!-- Coluna: Crônica (log + chat) -->
+      <section class="table-col col-log" id="col-log">
+        <div class="col-head"><h3>Crônica da Sessão</h3></div>
+        <div class="log-feed" id="log-feed"></div>
+        <div class="chat-bar">
+          <input id="chat-input" class="ink-input" type="text" maxlength="500" placeholder="Falar com a mesa…" />
+          <button class="btn-wax btn-sm" id="btn-chat">➤</button>
+        </div>
+      </section>
+
+      <!-- Coluna: Dados -->
+      <section class="table-col col-dice" id="col-dice">
+        <div class="col-head"><h3>Mesa de Dados</h3></div>
+        <div class="dice-tray parchment">
+          <div class="quick-dice" id="quick-dice"></div>
+          <div class="dice-mode">
+            <button class="mode-btn active" data-mode="normal">Normal</button>
+            <button class="mode-btn" data-mode="advantage">Vantagem</button>
+            <button class="mode-btn" data-mode="disadvantage">Desvantagem</button>
+          </div>
+          <div class="custom-roll">
+            <input id="dice-expr" class="ink-input" type="text" maxlength="60" placeholder="ex.: 2d6+3" />
+            <button class="btn-wax btn-sm" id="btn-roll-expr">Rolar</button>
+          </div>
+          <div class="last-roll" id="last-roll"></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+</div>
+
+<!-- Overlay: ficha completa -->
+<div class="overlay" id="sheet-overlay" hidden>
+  <div class="sheet-modal parchment" id="sheet-modal"></div>
+</div>
+
+<!-- Overlay: configurar mesa (mestre, durante o jogo) -->
+<div class="overlay" id="config-overlay" hidden>
+  <div class="config-modal parchment" id="config-modal"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="dice-anim" class="dice-anim" hidden><div class="d20-spin">🎲</div></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/engine.js"></script>
+<script src="/js/profile.js"></script>
+<script src="/js/builder.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

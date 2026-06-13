@@ -1,0 +1,22 @@
+{
+  "name": "tavola-rpg",
+  "version": "1.0.0",
+  "description": "Távola — mesa virtual de RPG D&D 5e em tempo real: salas, fichas, dados, chat e sessões pausadas.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test/test_core.mjs && node test/test_integration.mjs"
+  },
+  "keywords": ["rpg", "dnd", "d&d", "5e", "vtt", "tabletop", "socket.io"],
+  "author": "AndrausP",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}
